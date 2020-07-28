@@ -35,7 +35,7 @@ public class PDFServiceImpl implements PDFService {
 
         try {
             for (File file : files) {
-                currentFileName = file.getName();
+                if (currentFileName.endsWith(".pdf")) currentFileName = file.getName();
                 pdfMerger.addSource(file);
             }
 
