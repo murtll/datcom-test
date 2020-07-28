@@ -28,40 +28,73 @@ public class RestController {
 
     /**
      * This method get list of PDF-files names from JSON, gives this names to PDFService to do work.
-     * In case if one of files are not PDF-file, this file is skipped.
+     * In case if one of files are not PDF-file, this file is skipped. List of not PDF files is printing in the result.
      * @param files list of all PDF-files names.
-     * @return Method return path to output file if work successfully done, "Fail!" if some errors occured.
+     * @return path to output file if work successfully done, or error cause if some errors occured. If there are no PDF files, returns "No PDF files detected".
      * */
     @PostMapping(value = "/files", consumes = "application/json")
     @ResponseBody
     public String mergeAndStampPdfFiles(@RequestBody List<String> files) {
 
-        String result;
+        StringBuilder result = new StringBuilder("No PDF files detected!");
+        String appendingNotPdf = null;
+        String appendingNotFound = null;
 
-        List<File> fileList = new ArrayList<>();
+        if (files.size() > 0) {
 
-        for (String fileName: files) {
+            List<File> fileList = new ArrayList<>();
+            List<String> notPdfList = new ArrayList<>();
+            List<String> notFoundList = new ArrayList<>();
 
-            System.out.println(fileName);
+            for (String fileName: files) {
 
-            if (fileName.endsWith(".pdf")) {
-                fileList.add(new File(fileName));
-            } else {
-                System.out.println("File '" + fileName + "' is not PDF-file!");
+                File tmpFile = new File(fileName);
+
+                if (tmpFile.exists()) {
+                    if (fileName.endsWith(".pdf")) {
+                        fileList.add(tmpFile);
+                    } else {
+                        System.out.println("File '" + fileName + "' is not PDF-file!");
+                        notPdfList.add(fileName);
+                        appendingNotPdf = "Those files are not PDF files so they was ignored: ";
+                    }
+                } else {
+                    System.out.println("File '" + fileName + "' not found!");
+                    notFoundList.add(fileName);
+                    appendingNotFound = "Those files was not found: ";
+                }
+
             }
-        }
 
-        result = pdfService.mergePDFs(fileList);
+            if (fileList.size() > 0) {
+                result = new StringBuilder(pdfService.mergePDFs(fileList));
 
-        if (result.endsWith(".pdf")) {
-            result = pdfService.addQRsToPDF(new File(result), new Date().toString());
+                if (result.toString().endsWith(".pdf")) {
+                    result = new StringBuilder(pdfService.addQRsToPDF(new File(result.toString()), new Date().toString()));
+                }
+            }
+
+            if (appendingNotPdf != null) {
+                result.append("\n").append(appendingNotPdf);
+
+                for (String filename : notPdfList) {
+                    result.append("\n").append(filename);
+                }
+            }
+
+            if (appendingNotFound != null) {
+                result.append("\n").append(appendingNotFound);
+
+                for (String filename : notFoundList) {
+                    result.append("\n").append(filename);
+                }
+            }
+
         }
 
         System.out.println(result);
 
-        return result;
+        return result.toString();
     }
 
 }
-
-

@@ -78,7 +78,6 @@ public class PDFServiceImpl implements PDFService {
             PDDocument document = PDDocument.load(pdf);
 
             for (int i = 0; i < document.getNumberOfPages(); i++) {
-                document = PDDocument.load(pdf);
 
                 PDPage page = document.getPage(i);
 
@@ -90,11 +89,11 @@ public class PDFServiceImpl implements PDFService {
 
                 stream.close();
 
-                document.save(pdf);
-
-                document.close();
-
             }
+
+            document.save(pdf);
+
+            document.close();
 
             qr.delete();
 
