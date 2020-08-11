@@ -1,11 +1,5 @@
-# Test task
+# Микросервис для обработки PDF-документов
 
-Test task for <a href="datcom.kz">datcom.kz</a>
+Задание для <a href="https://datcom.kz">datcom.kz</a>
 
-Tests in folder <a href="https://github.com/murtll/datcom-test/tree/master/src/test/java/kz/datcom/test">src/test</a>
-
-Main code in folder <a href="https://github.com/murtll/datcom-test/tree/master/src/main/java/kz/datcom/test">src/main/java</a>
-
-Documentation in folder <a href="https://github.com/murtll/datcom-test/tree/master/doc">docs</a>
-
-In folder <a href="https://github.com/murtll/datcom-test/tree/master/files">files</a> are some test files.
+Микросервис получает JSON со списком путей к файлам формата PDF, объединяет их в один PDF-файл, и добавляет на каждую страницу конечного документа QR-код с текущей датой и временем. В ответ возвращает полный путь к конечному файлу. Если файл из списка не найден, или не является PDF-файлом, он будет проигнорирован (в конечном ответе будет указано, какие файлы не попали в конечный документ по этим причинам), все остальные файлы будут объединены.
